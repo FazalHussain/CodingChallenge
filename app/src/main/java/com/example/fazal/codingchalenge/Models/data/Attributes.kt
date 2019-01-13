@@ -35,7 +35,11 @@ data class Attributes (
         @SerializedName("Inventories")
         var inventories: List<Inventories>,
         @SerializedName("Role")
-        var role: Role
+        var roleObject: Role? = null,
+        var role: String? = "",
+        @SerializedName("full_name")
+        var fullName: String
+
 
 
 )

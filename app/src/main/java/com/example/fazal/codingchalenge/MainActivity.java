@@ -10,17 +10,22 @@ import android.widget.ProgressBar;
 
 import com.example.fazal.codingchalenge.Communication.rest.IUserDataHandler;
 import com.example.fazal.codingchalenge.Communication.rest.UserRepository;
+import com.example.fazal.codingchalenge.Models.data.Item;
 import com.example.fazal.codingchalenge.Models.data.Items;
 import com.example.fazal.codingchalenge.Models.response.WorkerResponse;
 import com.example.fazal.codingchalenge.UI.helper.WorkerAdapter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import butterknife.BindFloat;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+/**
+ * Main Activity Class
+ */
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = MainActivity.class.getSimpleName();
@@ -36,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     ProgressBar progressBar;
 
     List<Items> itemsList = new ArrayList<>();
+    List<Item> listAccordingToRole = new ArrayList<>();
     private WorkerAdapter adapter;
 
     @Override
@@ -52,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(mLayoutManager);
 
-        adapter = new WorkerAdapter(this, itemsList);
+        adapter = new WorkerAdapter(this, listAccordingToRole);
         recyclerView.setAdapter(adapter);
         progressBar.setVisibility(View.VISIBLE);
         repository.requestWorkers(this, userDataHandler);
@@ -66,7 +72,8 @@ public class MainActivity extends AppCompatActivity {
         public void onWorkerFetched(WorkerResponse response) {
             if (response != null) {
                 itemsList.addAll(response.getData().getItems());
-                adapter.notifyDataSetChanged();
+                listAccordingToRole = response.populateList(itemsList);
+                adapter.refresh(listAccordingToRole);
                 progressBar.setVisibility(View.INVISIBLE);
             }
         }
